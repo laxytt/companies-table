@@ -13,7 +13,7 @@ const App = () => {
   return (
     <div className="ui container">
       <SearchBar />
-      <CompaniesTable companiesObj={state} />
+      <CompaniesTable companies={state} />
     </div>
   );
 };

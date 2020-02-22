@@ -1,23 +1,27 @@
 import createDataContext from "./createDataContext";
 import companiesApi from "../api/companiesApi";
 
-const companiesReducer = (state, action) => {
+const initialUserState = {
+  companies: []
+};
+
+const companiesReducer = (state = initialUserState, action) => {
   switch (action.type) {
     case "get_companies":
-      return [...state, action.payload];
+      return { ...state, companies: action.payload };
     case "get_income":
       return [...state, action.payload];
     default:
       return state;
   }
 };
-
 const getCompanies = dispatch => {
   return async () => {
     await companiesApi
       .get("/companies")
       .then(function(response) {
-        dispatch({ type: "get_companies", payload: response.data });
+        const companies = response.data;
+        dispatch({ type: "get_companies", payload: companies });
       })
       .catch(function(error) {
         console.log(error);
