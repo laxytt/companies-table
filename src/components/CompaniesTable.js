@@ -32,7 +32,7 @@ const CompaniesTable = ({
 
   useEffect(() => {}, [currentSort]);
 
-  const onSortChangeString = key => {
+  const onSortChange= key => {
     let nextSort;
 
     if (currentSort === "default") nextSort = "up";
@@ -42,14 +42,7 @@ const CompaniesTable = ({
     setCurrentSort(nextSort);
   };
 
-  const onSortChangeInteger = key => {
-    let nextSort;
-
-    if (currentSort === "default") nextSort = "up";
-    else if (currentSort === "up") nextSort = "down";
-    else if (currentSort === "down") nextSort = "default";
-    setCurrentSort(nextSort);
-  };
+ 
 
   const fetchIncomes = async id => {
     const res = await axios.get(
@@ -80,7 +73,7 @@ const CompaniesTable = ({
             <th>
               ID
               <i
-                onClick={onSortChangeInteger}
+                onClick={onSortChange}
                 className={`${sortTypes[currentSort].class} icon`}
               />
             </th>
@@ -88,35 +81,35 @@ const CompaniesTable = ({
             <th>
               Name
               <i
-                onClick={onSortChangeString}
+                onClick={onSortChange}
                 className={`${sortTypes[currentSort].class} icon`}
               />
             </th>
             <th>
               City
               <i
-                onClick={onSortChangeString}
+                onClick={onSortChange}
                 className={`${sortTypes[currentSort].class} icon`}
               />
             </th>
             <th>
               Total Income
               <i
-                onClick={onSortChangeInteger}
+                onClick={onSortChange}
                 className={`${sortTypes[currentSort].class} icon`}
               />
             </th>
             <th>
               Average Income
               <i
-                onClick={onSortChangeInteger}
+                onClick={onSortChange}
                 className={`${sortTypes[currentSort].class} icon`}
               />
             </th>
             <th>
               Last Month Income
               <i
-                onClick={onSortChangeInteger}
+                onClick={onSortChange}
                 className={`${sortTypes[currentSort].class} icon`}
               />
             </th>
