@@ -1,19 +1,46 @@
-import React, { useEffect, useContext } from "react";
+import "../css/Global.css";
+import React, { useEffect, useState } from "react";
 import SearchBar from "../components/SearchBar";
-import { Context } from "../context/CompaniesContext";
 import CompaniesTable from "../components/CompaniesTable";
+import Pagination from "../components/Pagination";
+import axios from "axios";
 
 const App = () => {
-  const { getCompanies, state } = useContext(Context);
+  const [companies, setCompanies] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [companiesPerPage] = useState(25);
 
   useEffect(() => {
-    getCompanies();
+    const fetchCompanies = async () => {
+      setLoading(true);
+      const res = await axios.get(
+        "https://recruitment.hal.skygate.io/companies"
+      );
+      setCompanies(res.data);
+      setLoading(false);
+    };
+
+    fetchCompanies();
   }, []);
 
+  const paginate = pageNumber => setCurrentPage(pageNumber);
+
   return (
-    <div className="ui container">
+    <div className="app ui container">
       <SearchBar />
-      <CompaniesTable companies={state} />
+      <CompaniesTable
+        companies={companies}
+        loading={loading}
+        currentPage={currentPage}
+        companiesPerPage={companiesPerPage}
+      />
+      <Pagination
+        companiesPerPage={companiesPerPage}
+        totalCompanies={companies.length}
+        paginate={paginate}
+        currentPage={currentPage}
+      />
     </div>
   );
 };
