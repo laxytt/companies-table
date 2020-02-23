@@ -2,29 +2,16 @@ import "../css/Global.css";
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 
-const sortTypesString = {
+const sortTypes = {
   up: {
     class: "sort up",
-    fn: key => (a, b) => a[key].toString().localeCompare(b[key].toString())
+    fn: key => (a, b) =>
+      typeof a === "string" ? a[key].localeCompare(b[key]) : a[key] - b[key]
   },
   down: {
     class: "sort down",
-    fn: key => (a, b) => b[key].toString().localeCompare(a[key].toString())
-  },
-  default: {
-    class: "sort",
-    fn: (a, b) => a
-  }
-};
-
-const sortTypesInteger = {
-  up: {
-    class: "sort-up",
-    fn: key => (a, b) => a[key] - b[key]
-  },
-  down: {
-    class: "sort-down",
-    fn: key => (a, b) => b[key] - a[key]
+    fn: key => (a, b) =>
+      typeof a === "string" ? b[key].localeCompare(a[key]) : b[key] - a[key]
   },
   default: {
     class: "sort",
@@ -55,14 +42,13 @@ const CompaniesTable = ({
     setCurrentSort(nextSort);
   };
 
-  const onSortChangeInteger = (key) => {
+  const onSortChangeInteger = key => {
     let nextSort;
 
     if (currentSort === "default") nextSort = "up";
     else if (currentSort === "up") nextSort = "down";
     else if (currentSort === "down") nextSort = "default";
     setCurrentSort(nextSort);
-
   };
 
   const fetchIncomes = async id => {
@@ -76,9 +62,9 @@ const CompaniesTable = ({
     return <h2>Loading...</h2>;
   }
   sortedCompanies =
-  currentSort === "default"
-    ? sortedCompanies
-    : [...companies].sort(sortTypesInteger[currentSort].fn("id"));
+    currentSort === "default"
+      ? sortedCompanies
+      : [...companies].sort(sortTypes[currentSort].fn("id"));
   const indexOfLastCompany = currentPage * companiesPerPage;
   const indexOfFirstCompany = indexOfLastCompany - companiesPerPage;
   const currentCompanies = sortedCompanies.slice(
@@ -95,7 +81,7 @@ const CompaniesTable = ({
               ID
               <i
                 onClick={onSortChangeInteger}
-                className={`${sortTypesString[currentSort].class} icon`}
+                className={`${sortTypes[currentSort].class} icon`}
               />
             </th>
 
@@ -103,35 +89,35 @@ const CompaniesTable = ({
               Name
               <i
                 onClick={onSortChangeString}
-                className={`${sortTypesString[currentSort].class} icon`}
+                className={`${sortTypes[currentSort].class} icon`}
               />
             </th>
             <th>
               City
               <i
                 onClick={onSortChangeString}
-                className={`${sortTypesString[currentSort].class} icon`}
+                className={`${sortTypes[currentSort].class} icon`}
               />
             </th>
             <th>
               Total Income
               <i
                 onClick={onSortChangeInteger}
-                className={`${sortTypesInteger[currentSort].class} icon`}
+                className={`${sortTypes[currentSort].class} icon`}
               />
             </th>
             <th>
               Average Income
               <i
                 onClick={onSortChangeInteger}
-                className={`${sortTypesInteger[currentSort].class} icon`}
+                className={`${sortTypes[currentSort].class} icon`}
               />
             </th>
             <th>
               Last Month Income
               <i
                 onClick={onSortChangeInteger}
-                className={`${sortTypesInteger[currentSort].class} icon`}
+                className={`${sortTypes[currentSort].class} icon`}
               />
             </th>
           </tr>
