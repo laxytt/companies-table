@@ -10,9 +10,8 @@ const App = () => {
   const [companiesIncome, setCompaniesIncome] = useState([]);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [companiesPerPage] = useState(25);
+  const [companiesPerPage] = useState(20);
   const [searchTerm, setSearchTerm] = useState("");
-  const [joinedData, setJoinedData] = useState([]);
 
   useEffect(() => {
     const fetchCompanies = async () => {
@@ -20,15 +19,15 @@ const App = () => {
       const res = await axios.get(
         "https://recruitment.hal.skygate.io/companies"
       );
+
+      const incomesArr = await Promise.all(
+        res.data.map(company =>
+          axios.get(`https://recruitment.hal.skygate.io/incomes/${company.id}`)
+        )
+      );
       setCompanies(res.data);
-      let incomesArr = [];
-      res.data.map(async company => {
-        const res = await axios.get(
-          `https://recruitment.hal.skygate.io/incomes/${company.id}`
-        );
-        incomesArr.push(res.data);
-      });
       setCompaniesIncome(incomesArr);
+
       setLoading(false);
     };
 
@@ -51,13 +50,11 @@ const App = () => {
     );
   };
 
-  const test = {...companies, ...companiesIncome};
-  console.log(test);
-
   const paginate = pageNumber => setCurrentPage(pageNumber);
-  countIncomes();
   return (
     <div className="app ui container">
+      <h1 id="title">COMPANIES DETAILS</h1>
+
       <SearchBar
         term={searchTerm}
         onTermChange={newTerm => setSearchTerm(newTerm)}

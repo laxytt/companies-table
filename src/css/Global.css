@@ -1,15 +1,16 @@
 
   .app {
-    margin-top: 5%;
+    margin-top: 2%;
   }
 
   #title {
     text-align: center;
     font-family: arial, sans-serif;
+    margin-bottom: 2%;
   }
 
   .companies-table {
-    margin-top: 5%;
+    margin-top: 2%;
     margin-bottom:1%;
   }
   
@@ -44,9 +45,12 @@
   
   .pagination {
     display: inline-block;
-    align-content: center;
+    text-align: center;
   }
   
+  .nav {
+    text-align: center;
+  }
   .pagination a {
     color: black;
     float: left;
@@ -66,10 +70,17 @@
   .pagination a:hover:not(.active) {background-color: #ddd;}
 
   ul#horizontal-list {
-    min-width: 696px;
+    width: auto;
     list-style: none;
     padding-top: 20px;
+    display: inline-block;
+    text-align: center;
     }
     ul#horizontal-list li {
-      display: inline;
+      display: inline-block
+    }
+
+    .center {
+      text-align: center;
+      width: 100%;
     }

@@ -1,5 +1,6 @@
 import "../css/Global.css";
 import React, { useState, useEffect } from "react";
+import _ from "lodash";
 
 const CompaniesTable = ({
   companies,
@@ -9,29 +10,11 @@ const CompaniesTable = ({
   companiesPerPage
 }) => {
   const [currentSort, setCurrentSort] = useState("default");
-  let sortedCompanies = companies;
-  let totalIncArr = [];
 
-  const countTotalIncome = () => {
-    // console.log("działa");
-    // console.log(companiesIncome);
-    let totalInc = 0;
-    companiesIncome.map(
-      ({ incomes }) => (
-        console.log(companiesIncome),
-        incomes.map(i => (totalInc = totalInc + parseInt(i.value))),
-        totalIncArr.push(totalInc)
-      )
-    );
-  };
-
-  if (companiesIncome.length >= 1) {
-    countTotalIncome();
-  }
+  let companyData = _.merge(companies, companiesIncome);
 
   if (loading) {
     return (
-      // <div class="ui segment">
       <div>
         <div class="ui active inverted dimmer">
           <div class="ui text loader">Loading</div>
@@ -44,17 +27,17 @@ const CompaniesTable = ({
   const indexOfLastCompany = currentPage * companiesPerPage;
   const indexOfFirstCompany = indexOfLastCompany - companiesPerPage;
 
-  let currentCompanies = sortedCompanies.slice(
+  let currentCompanies = companyData.slice(
     indexOfFirstCompany,
     indexOfLastCompany
   );
 
   const onSort = sortKey => {
-    let data = companies;
+    let data;
     let nextSort;
 
     if (currentSort === "default") {
-      data = companies.sort((a, b) =>
+      data = companyData.sort((a, b) =>
         typeof a[sortKey] === "string"
           ? a[sortKey].localeCompare(b[sortKey])
           : a[sortKey] - b[sortKey]
@@ -62,7 +45,7 @@ const CompaniesTable = ({
       nextSort = "down";
     }
     if (currentSort === "down") {
-      data = companies.sort((a, b) =>
+      data = companyData.sort((a, b) =>
         typeof a[sortKey] === "string"
           ? b[sortKey].localeCompare(a[sortKey])
           : b[sortKey] - a[sortKey]
@@ -70,7 +53,7 @@ const CompaniesTable = ({
       nextSort = "up";
     }
     if (currentSort === "up") {
-      data = companies.sort((a, b) =>
+      data = companyData.sort((a, b) =>
         typeof a[sortKey] === "string"
           ? a[sortKey].localeCompare(b[sortKey])
           : a[sortKey] - b[sortKey]
@@ -88,15 +71,65 @@ const CompaniesTable = ({
     { id: "average_income", text: "Average Income" },
     { id: "last_month_income", text: "Last Month Income" }
   ];
+
+  const calcTotalInc = data => {
+    let totalInc = 0;
+    let incomeArr = [data];
+    incomeArr.map(({ incomes, id }) =>
+      incomes.map(i => (totalInc = totalInc + parseInt(i.value)))
+    );
+
+    return totalInc;
+  };
+
+  const calcAverageInc = data => {
+    let averageInc = 0;
+    let c = 0;
+    let test = [];
+    let incomeArr = [data];
+    incomeArr.map(({ incomes, id }) =>
+      incomes.map(i => (c++, (averageInc += parseInt(i.value) / c)))
+    );
+
+    return Math.round(averageInc);
+  };
+
+  const calcLastMonth = data => {
+    let averageInc = 0;
+    let c = 0;
+    let incomeArr = [data];
+    incomeArr.map(({ incomes, id }) =>
+      incomes.map(i => (c++, (averageInc += parseInt(i.value) / c)))
+    );
+
+    return Math.round(averageInc);
+  };
+
   const companyRows = () => {
-    return currentCompanies.map(company => (
-      <tr key={company.id}>
-        <td>{company.id}</td>
-        <td>{company.name}</td>
-        <td>{company.city}</td>
-        <td>TEST</td>
-        <td>TEST</td>
-        <td>TEST</td>
+    let lastMonthInc = 0;
+    return currentCompanies.map(({ data, id, name, city }) => (
+      <tr key={id}>
+        <td>
+          <b>{id}</b>
+        </td>
+        <td>
+          <b>{name}</b>
+        </td>
+        <td>
+          <b>{city}</b>
+        </td>
+        <td>
+          <b>{calcTotalInc(data)}</b>
+          <i class="dollar sign icon"></i>
+        </td>
+        <td>
+          <b>{calcAverageInc(data)}</b>
+          <i class="dollar sign icon"></i>
+        </td>
+        <td>
+          <b>{lastMonthInc}</b>
+          <i class="dollar sign icon"></i>
+        </td>
       </tr>
     ));
   };
@@ -104,7 +137,6 @@ const CompaniesTable = ({
   return (
     <div>
       <div className="companies-table">
-        <h1 id="title">Companies Details</h1>
         <table id="companies">
           <thead>
             <tr>

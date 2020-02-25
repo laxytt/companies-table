@@ -13,22 +13,22 @@ const Pagination = ({
   }
 
   return (
-    <nav className="pagination">
-      <ul id="horizontal-list">
-        {/* <a href="#">&laquo;</a> */}
-        {pageNumbers.map(number => (
-          <li key={number} className="page-item">
-            <a
-              className={number === currentPage ? "active" : null}
-              onClick={() => paginate(number)}
-            >
-              {number}
-            </a>
-          </li>
-        ))}
-        {/* <a href="#">&raquo;</a> */}
-      </ul>
-    </nav>
+    <div className="center">
+      <nav className="pagination">
+        <ul id="horizontal-list">
+          {pageNumbers.map(number => (
+            <li key={number} className="page-item">
+              <a
+                className={number === currentPage ? "active" : null}
+                onClick={() => paginate(number)}
+              >
+                {number}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+      </div>
   );
 };
 
