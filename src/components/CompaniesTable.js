@@ -1,139 +1,130 @@
 import "../css/Global.css";
-import axios from "axios";
 import React, { useState, useEffect } from "react";
-
-const sortTypes = {
-  up: {
-    class: "sort up",
-    fn: key => (a, b) =>
-      typeof a === "string" ? a[key].localeCompare(b[key]) : a[key] - b[key]
-  },
-  down: {
-    class: "sort down",
-    fn: key => (a, b) =>
-      typeof a === "string" ? b[key].localeCompare(a[key]) : b[key] - a[key]
-  },
-  default: {
-    class: "sort",
-    fn: (a, b) => a
-  }
-};
 
 const CompaniesTable = ({
   companies,
+  companiesIncome,
   loading,
   currentPage,
   companiesPerPage
 }) => {
   const [currentSort, setCurrentSort] = useState("default");
   let sortedCompanies = companies;
+  let totalIncArr = [];
 
-  const companiesIncome = [];
-
-  useEffect(() => {}, [currentSort]);
-
-  const onSortChange= key => {
-    let nextSort;
-
-    if (currentSort === "default") nextSort = "up";
-    else if (currentSort === "up") nextSort = "down";
-    else if (currentSort === "down") nextSort = "default";
-
-    setCurrentSort(nextSort);
-  };
-
- 
-
-  const fetchIncomes = async id => {
-    const res = await axios.get(
-      `https://recruitment.hal.skygate.io/incomes/${id}`
+  const countTotalIncome = () => {
+    // console.log("działa");
+    // console.log(companiesIncome);
+    let totalInc = 0;
+    companiesIncome.map(
+      ({ incomes }) => (
+        console.log(companiesIncome),
+        incomes.map(i => (totalInc = totalInc + parseInt(i.value))),
+        totalIncArr.push(totalInc)
+      )
     );
-    companiesIncome.push(res.data);
   };
+
+  if (companiesIncome.length >= 1) {
+    countTotalIncome();
+  }
 
   if (loading) {
-    return <h2>Loading...</h2>;
+    return (
+      // <div class="ui segment">
+      <div>
+        <div class="ui active inverted dimmer">
+          <div class="ui text loader">Loading</div>
+        </div>
+        <p></p>
+      </div>
+    );
   }
-  sortedCompanies =
-    currentSort === "default"
-      ? sortedCompanies
-      : [...companies].sort(sortTypes[currentSort].fn("id"));
+
   const indexOfLastCompany = currentPage * companiesPerPage;
   const indexOfFirstCompany = indexOfLastCompany - companiesPerPage;
-  const currentCompanies = sortedCompanies.slice(
+
+  let currentCompanies = sortedCompanies.slice(
     indexOfFirstCompany,
     indexOfLastCompany
   );
-  return (
-    <div className="companies-table">
-      <h1 id="title">Companies Details</h1>
-      <table id="companies">
-        <thead>
-          <tr>
-            <th>
-              ID
-              <i
-                onClick={onSortChange}
-                className={`${sortTypes[currentSort].class} icon`}
-              />
-            </th>
 
-            <th>
-              Name
-              <i
-                onClick={onSortChange}
-                className={`${sortTypes[currentSort].class} icon`}
-              />
-            </th>
-            <th>
-              City
-              <i
-                onClick={onSortChange}
-                className={`${sortTypes[currentSort].class} icon`}
-              />
-            </th>
-            <th>
-              Total Income
-              <i
-                onClick={onSortChange}
-                className={`${sortTypes[currentSort].class} icon`}
-              />
-            </th>
-            <th>
-              Average Income
-              <i
-                onClick={onSortChange}
-                className={`${sortTypes[currentSort].class} icon`}
-              />
-            </th>
-            <th>
-              Last Month Income
-              <i
-                onClick={onSortChange}
-                className={`${sortTypes[currentSort].class} icon`}
-              />
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {currentCompanies.map(
-            company => (
-              fetchIncomes(company.id),
-              (
-                <tr key={companies.id}>
-                  <td>{company.id}</td>
-                  <td>{company.name}</td>
-                  <td>{company.city}</td>
-                  <td>TEST</td>
-                  <td>TEST</td>
-                  <td>TEST</td>
-                </tr>
-              )
-            )
-          )}
-        </tbody>
-      </table>
-      <table id="companies"></table>
+  const onSort = sortKey => {
+    let data = companies;
+    let nextSort;
+
+    if (currentSort === "default") {
+      data = companies.sort((a, b) =>
+        typeof a[sortKey] === "string"
+          ? a[sortKey].localeCompare(b[sortKey])
+          : a[sortKey] - b[sortKey]
+      );
+      nextSort = "down";
+    }
+    if (currentSort === "down") {
+      data = companies.sort((a, b) =>
+        typeof a[sortKey] === "string"
+          ? b[sortKey].localeCompare(a[sortKey])
+          : b[sortKey] - a[sortKey]
+      );
+      nextSort = "up";
+    }
+    if (currentSort === "up") {
+      data = companies.sort((a, b) =>
+        typeof a[sortKey] === "string"
+          ? a[sortKey].localeCompare(b[sortKey])
+          : a[sortKey] - b[sortKey]
+      );
+      nextSort = "down";
+    }
+    setCurrentSort(nextSort);
+  };
+
+  const fieldOrder = [
+    { id: "id", text: "ID" },
+    { id: "name", text: "Name" },
+    { id: "city", text: "City" },
+    { id: "total_income", text: "Total Income" },
+    { id: "average_income", text: "Average Income" },
+    { id: "last_month_income", text: "Last Month Income" }
+  ];
+  const companyRows = () => {
+    return currentCompanies.map(company => (
+      <tr key={company.id}>
+        <td>{company.id}</td>
+        <td>{company.name}</td>
+        <td>{company.city}</td>
+        <td>TEST</td>
+        <td>TEST</td>
+        <td>TEST</td>
+      </tr>
+    ));
+  };
+
+  return (
+    <div>
+      <div className="companies-table">
+        <h1 id="title">Companies Details</h1>
+        <table id="companies">
+          <thead>
+            <tr>
+              {fieldOrder.map(field => {
+                return (
+                  <th key={field.id}>
+                    {field.text}
+                    <i
+                      key={field.id}
+                      onClick={() => onSort(field.id)}
+                      className={`sort icon`}
+                    />
+                  </th>
+                );
+              })}
+            </tr>
+          </thead>
+          <tbody>{companyRows()}</tbody>
+        </table>
+      </div>
     </div>
   );
 };
