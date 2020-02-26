@@ -1,23 +1,23 @@
 import "../css/Global.css";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import _ from "lodash";
 
 const CompaniesTable = ({
   companies,
-  companiesIncome,
   loading,
   currentPage,
-  companiesPerPage
+  companiesPerPage,
+  totalIncomeArr,
+  averageIncomeArr
 }) => {
   const [currentSort, setCurrentSort] = useState("default");
 
-  let companyData = _.merge(companies, companiesIncome);
-
+  const  companyData = _.merge(companies, totalIncomeArr, averageIncomeArr);
   if (loading) {
     return (
       <div>
-        <div class="ui active inverted dimmer">
-          <div class="ui text loader">Loading</div>
+        <div className="ui active inverted dimmer">
+          <div className="ui text loader">Loading</div>
         </div>
         <p></p>
       </div>
@@ -33,7 +33,7 @@ const CompaniesTable = ({
   );
 
   const onSort = sortKey => {
-    let data;
+    let data = companyData;
     let nextSort;
 
     if (currentSort === "default") {
@@ -48,7 +48,7 @@ const CompaniesTable = ({
       data = companyData.sort((a, b) =>
         typeof a[sortKey] === "string"
           ? b[sortKey].localeCompare(a[sortKey])
-          : b[sortKey] - a[sortKey]
+          : parseInt(b[sortKey]) - parseInt(a[sortKey])
       );
       nextSort = "up";
     }
@@ -72,42 +72,8 @@ const CompaniesTable = ({
     { id: "last_month_income", text: "Last Month Income" }
   ];
 
-  const calcTotalInc = data => {
-    let totalInc = 0;
-    let incomeArr = [data];
-    incomeArr.map(({ incomes, id }) =>
-      incomes.map(i => (totalInc = totalInc + parseInt(i.value)))
-    );
-
-    return totalInc;
-  };
-
-  const calcAverageInc = data => {
-    let averageInc = 0;
-    let c = 0;
-    let test = [];
-    let incomeArr = [data];
-    incomeArr.map(({ incomes, id }) =>
-      incomes.map(i => (c++, (averageInc += parseInt(i.value) / c)))
-    );
-
-    return Math.round(averageInc);
-  };
-
-  const calcLastMonth = data => {
-    let averageInc = 0;
-    let c = 0;
-    let incomeArr = [data];
-    incomeArr.map(({ incomes, id }) =>
-      incomes.map(i => (c++, (averageInc += parseInt(i.value) / c)))
-    );
-
-    return Math.round(averageInc);
-  };
-
   const companyRows = () => {
-    let lastMonthInc = 0;
-    return currentCompanies.map(({ data, id, name, city }) => (
+    return currentCompanies.map(({ totalInc, averageInc, id, name, city }) => (
       <tr key={id}>
         <td>
           <b>{id}</b>
@@ -119,16 +85,16 @@ const CompaniesTable = ({
           <b>{city}</b>
         </td>
         <td>
-          <b>{calcTotalInc(data)}</b>
-          <i class="dollar sign icon"></i>
+          <b>{totalInc}</b>
+          <i className="dollar sign icon"></i>
         </td>
         <td>
-          <b>{calcAverageInc(data)}</b>
-          <i class="dollar sign icon"></i>
+          <b>{averageInc}</b>
+          <i className="dollar sign icon"></i>
         </td>
         <td>
-          <b>{lastMonthInc}</b>
-          <i class="dollar sign icon"></i>
+          <b>0</b>
+          <i className="dollar sign icon"></i>
         </td>
       </tr>
     ));
