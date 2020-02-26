@@ -76,7 +76,6 @@ const App = () => {
     //     console.log(mostRecentObject);
     //   };
 
-      lastMonthincome()
       setCompanies(res.data);
       setTotalIncomeArr(totalIncomeArr);
       setAverageIncomeArr(averageIncomeArr);
