@@ -1,9 +1,15 @@
 import React, { useState } from "react";
 
-const SearchBar = ({ searchTerm, onTermChange, onTermSubmit }) => {
+const SearchBar = ({ onTermSubmit }) => {
+  const [term, setTerm] = useState("");
+
+  const onInputChange = event => {
+    setTerm(event.target.value);
+  };
+
   const onFormSubmit = event => {
     event.preventDefault();
-    //make sure to call callback from parent comp.
+    onTermSubmit(term);
   };
 
   return (
@@ -13,9 +19,8 @@ const SearchBar = ({ searchTerm, onTermChange, onTermSubmit }) => {
           <input
             type="text"
             placeholder="Type to search..."
-            value={searchTerm}
-            onChange={onTermChange}
-            onFormSubmit={onTermSubmit}
+            value={term}
+            onChange={onInputChange}
           />
         </div>
       </form>

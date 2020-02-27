@@ -1,5 +1,6 @@
 import "../css/Global.css";
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
+import SearchBar from "../components/SearchBar";
 import _ from "lodash";
 
 const CompaniesTable = ({
@@ -9,7 +10,7 @@ const CompaniesTable = ({
   tableData
 }) => {
   const [currentSort, setCurrentSort] = useState("default");
-  let sortedCompanies = [...tableData]  
+  let sortedCompanies = [...tableData];
 
   if (loading) {
     return (
@@ -25,12 +26,14 @@ const CompaniesTable = ({
   const indexOfLastCompany = currentPage * companiesPerPage;
   const indexOfFirstCompany = indexOfLastCompany - companiesPerPage;
 
-  let currentCompanies = sortedCompanies.slice(indexOfFirstCompany, indexOfLastCompany);
+  let currentCompanies = sortedCompanies.slice(
+    indexOfFirstCompany,
+    indexOfLastCompany
+  );
 
   const onSort = sortKey => {
     let data = tableData;
     let nextSort;
-
 
     if (currentSort === "default") {
       data = currentCompanies.sort((a, b) =>
@@ -44,7 +47,7 @@ const CompaniesTable = ({
       data = tableData.sort((a, b) =>
         typeof a[sortKey] === "string"
           ? b[sortKey].localeCompare(a[sortKey])
-          : parseInt(b[sortKey]) - parseInt(a[sortKey])
+          : b[sortKey] - a[sortKey]
       );
       nextSort = "up";
     }
@@ -69,38 +72,44 @@ const CompaniesTable = ({
   ];
 
   const companyRows = () => {
-    console.log(currentCompanies);
-    return currentCompanies.map(
-      ({ totalInc, averageInc, id, name, city }) => (
-        <tr key={id}>
-          <td>
-            <b>{id}</b>
-          </td>
-          <td>
-            <b>{name}</b>
-          </td>
-          <td>
-            <b>{city}</b>
-          </td>
-          <td>
-            <b>{totalInc}</b>
-            <i className="dollar sign icon"></i>
-          </td>
-          <td>
-            <b>{averageInc}</b>
-            <i className="dollar sign icon"></i>
-          </td>
-          <td>
-            <b>0</b>
-            <i className="dollar sign icon"></i>
-          </td>
-        </tr>
-      )
-    );
+    return currentCompanies.map(({ totalInc, averageInc, id, name, city }) => (
+      <tr key={id}>
+        <td>
+          <b>{id}</b>
+        </td>
+        <td>
+          <b>{name}</b>
+        </td>
+        <td>
+          <b>{city}</b>
+        </td>
+        <td>
+          <b>{totalInc}</b>
+          <i className="dollar sign icon"></i>
+        </td>
+        <td>
+          <b>{averageInc}</b>
+          <i className="dollar sign icon"></i>
+        </td>
+        <td>
+          <b>0</b>
+          <i className="dollar sign icon"></i>
+        </td>
+      </tr>
+    ));
+  };
+
+  const onTermSubmit = term => {
+    // const filteredData = tableData.filter( obj => Object.values(obj).some( val => val.contains(term)) )
+    // console.log(filteredData)
+    console.log("-----")
+    console.log(tableData);
+    console.log(term);
   };
 
   return (
     <div>
+      <SearchBar onTermSubmit={onTermSubmit} />
       <div className="companies-table">
         <table id="companies">
           <thead>

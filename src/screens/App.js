@@ -1,6 +1,5 @@
 import "../css/Global.css";
 import React, { useEffect, useState } from "react";
-import SearchBar from "../components/SearchBar";
 import CompaniesTable from "../components/CompaniesTable";
 import Pagination from "../components/Pagination";
 import axios from "axios";
@@ -11,7 +10,6 @@ const App = () => {
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [companiesPerPage] = useState(20);
-  const [searchTerm, setSearchTerm] = useState("");
   const [totalIncomeArr, setTotalIncomeArr] = useState([]);
   const [averageIncomeArr, setAverageIncomeArr] = useState([]);
 
@@ -26,11 +24,9 @@ const App = () => {
           axios.get(`https://recruitment.hal.skygate.io/incomes/${company.id}`)
         )
       );
-
       const mappedResponse = incomesArr.map(income => income.data);
       let totalIncomeArr = [];
       let averageIncomeArr = [];
-
       const totalIncome = () => {
         let totalInc = 0;
         mappedResponse.map(({ incomes, id }) => {
@@ -71,11 +67,6 @@ const App = () => {
   return (
     <div className="app ui container">
       <h1 id="title">COMPANIES DETAILS</h1>
-
-      <SearchBar
-        term={searchTerm}
-        onTermChange={newTerm => setSearchTerm(newTerm)}
-      />
       <CompaniesTable
         tableData={_.merge(companies, totalIncomeArr, averageIncomeArr)}
         companies={companies}
