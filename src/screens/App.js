@@ -26,15 +26,15 @@ const App = () => {
           axios.get(`https://recruitment.hal.skygate.io/incomes/${company.id}`)
         )
       );
+
       const mappedResponse = incomesArr.map(income => income.data);
       let totalIncomeArr = [];
       let averageIncomeArr = [];
+
       const totalIncome = () => {
         let totalInc = 0;
         mappedResponse.map(({ incomes, id }) => {
-          incomes.map(
-            ({ value, id }) => (totalInc = totalInc + parseInt(value))
-          );
+          incomes.map(({ value }) => (totalInc = totalInc + parseInt(value)));
           totalIncomeArr.push({ totalInc, id });
           totalInc = 0;
         });
@@ -45,36 +45,16 @@ const App = () => {
         let totalInc = 0;
         mappedResponse.map(({ incomes, id }) => {
           incomes.map(
-            ({ value, id }) => (
+            ({ value }) => (
               c++, (averageInc = (totalInc += parseInt(value)) / c)
             )
           );
-          averageIncomeArr.push({ averageInc, id });
+          averageIncomeArr.push({ averageInc: averageInc, id: id });
           averageInc = 0;
           totalInc = 0;
           c = 0;
         });
       };
-
-    //  const  lastMonthincome = () => {
-    //     let mostRecentDate = new Date(
-    //       Math.max.apply(
-    //         null,
-    //         mappedResponse.map(({ incomes }) => {
-    //           incomes.map(({ date }) => {
-    //             console.log(date)
-    //             return new Date(date.MeasureDate);
-    //           });
-    //         })
-    //       )
-    //     );
-    //     let mostRecentObject = mappedResponse.filter(e => {
-    //       let d = new Date(e.MeasureDate);
-    //       return d.getTime() == mostRecentDate.getTime();
-    //     })[0];
-    //     console.log(mostRecentDate);
-    //     console.log(mostRecentObject);
-    //   };
 
       setCompanies(res.data);
       setTotalIncomeArr(totalIncomeArr);
@@ -82,7 +62,6 @@ const App = () => {
       totalIncome();
       averageIncome();
       setLoading(false);
-      // const IncomeDataFull = _.merge(totalIncomeArr, averageIncomeArr)
     };
 
     fetchCompanies();
@@ -98,6 +77,7 @@ const App = () => {
         onTermChange={newTerm => setSearchTerm(newTerm)}
       />
       <CompaniesTable
+        tableData={_.merge(companies, totalIncomeArr, averageIncomeArr)}
         companies={companies}
         loading={loading}
         currentPage={currentPage}
